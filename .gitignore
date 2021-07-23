@@ -1,0 +1,6 @@
+# custom
+work_dirs/
+.predicts.csv
+
+# cache
+.__pycache__
