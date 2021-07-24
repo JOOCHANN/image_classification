@@ -3,4 +3,6 @@ work_dirs/
 .predicts.csv
 
 # cache
-.__pycache__
+__pycache__
+.vscode
+.model/efficient/__pycache__

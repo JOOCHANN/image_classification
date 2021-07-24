@@ -6,6 +6,7 @@ from pathlib import Path
 import torch
 import os
 import csv
+from sklearn.metrics import precision_recall_fscore_support
 
 from model.efficientnet.model import EfficientNet
 from torch.utils.data import DataLoader
@@ -28,7 +29,7 @@ is_scheduler = True
 gamma = 0.1
 data_path = '/data/data_server/pjc/planet_data_classification'
 save_model_path = './work_dirs/efficientnet-b7/'
-load_model_path = './work_dirs/efficientnet-b7/_6.pth'
+load_model_path = './work_dirs/efficientnet-b7/_9.pth'
 out_path = '.predicts.csv'
 
 def main(pause):
@@ -47,7 +48,7 @@ def main(pause):
         trainloader = DataLoader(dataset=smoke_trainset, batch_size=batch, shuffle=True)
     elif pause == 1:
         print("Test dataset loading")
-        test_path = os.path.join(data_path, 'test_v2')
+        test_path = os.path.join(data_path, 'test')
         smoke_trainset = SMOKE(classes, test_path, isTrain = False)
         testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
     
@@ -169,23 +170,37 @@ def bind_model(testloader, model):
     total = 0
     correct_pred = {classname: 0 for classname in classes}
     total_pred = {classname: 0 for classname in classes}
-    pr = []
+    pred = []
+    y_true = []
+    y_pred = []
 
     with torch.no_grad():
         for i, (data, labels, image_name) in enumerate(testloader):
             data = data.cuda()
             outputs = model(data)
             _, predicted = torch.max(outputs.data, 1)
+
+            y_pred.append(predicted.cpu().tolist())
+            y_true.append(labels.tolist())
+
             total += labels.size(0)
             correct += (predicted.cpu() == labels).sum().item()
 
-            pr.append([image_name[0], predicted.cpu().item()])
+            pred.append([image_name[0], predicted.cpu().item()])
 
             _, predictions = torch.max(outputs, 1)
             for label, prediction in zip(labels, predictions):
                 if label == prediction:
                     correct_pred[classes[label]] += 1
                 total_pred[classes[label]] += 1
+
+    precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average=None)
+
+    # precision, recall, f1score 출력
+    print('precision: {}'.format(precision))
+    print('recall: {}'.format(recall))
+    print('fscore: {}'.format(fscore))
+    print('support: {}'.format(support))
 
     # 결과 출력
     print('Accuracy of the all test images: %d %%' % (100 * correct / total))
@@ -197,17 +212,15 @@ def bind_model(testloader, model):
     # prediction csv파일로 저장
     f = open(out_path, 'w', newline='')
     wr = csv.writer(f)
-    wr.writerows(pr)
+    wr.writerows(pred)
     f.close()
     print('Done!!')
 
     exit(1)
 
-
-
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('--mode', default='train')
+    parser.add_argument('--mode', default='test')
     args = parser.parse_args()
 
     mkdir_if_not_exists(save_model_path)
