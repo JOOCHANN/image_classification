@@ -30,7 +30,7 @@ gamma = 0.1
 data_path = '/data/data_server/pjc/planet_data_classification'
 save_model_path = './work_dirs/efficientnet-b7/'
 load_model_path = './work_dirs/efficientnet-b7/_9.pth'
-out_path = '.predicts.csv'
+out_path = '.predictions.csv'
 
 def main(pause):
     # SEED
@@ -52,8 +52,7 @@ def main(pause):
         smoke_trainset = SMOKE(classes, test_path, isTrain = False)
         testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
     
-    print("number of datas : ", len(smoke_trainset))
-    print("End dataset loading")
+    print("number of data :", len(smoke_trainset), "End dataset loading")
 
     # model loading
     print("Creating model: {}".format(model_name))
@@ -185,11 +184,9 @@ def bind_model(testloader, model):
 
             total += labels.size(0)
             correct += (predicted.cpu() == labels).sum().item()
-
             pred.append([image_name[0], predicted.cpu().item()])
 
-            _, predictions = torch.max(outputs, 1)
-            for label, prediction in zip(labels, predictions):
+            for label, prediction in zip(labels, predicted):
                 if label == prediction:
                     correct_pred[classes[label]] += 1
                 total_pred[classes[label]] += 1
@@ -197,14 +194,13 @@ def bind_model(testloader, model):
     precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average=None)
 
     # precision, recall, f1score 출력
-    print('precision: {}'.format(precision))
-    print('recall: {}'.format(recall))
-    print('fscore: {}'.format(fscore))
-    print('support: {}'.format(support))
+    print('precision: \t{}'.format(precision))
+    print('recall: \t{}'.format(recall))
+    print('fscore: \t{}'.format(fscore))
+    print('support: \t{}'.format(support))
 
     # 결과 출력
     print('Accuracy of the all test images: %d %%' % (100 * correct / total))
-    
     for classname, correct_count in correct_pred.items():
         accuracy = 100 * float(correct_count) / total_pred[classname]
         print("Accuracy for class {:5s} is: {:.1f} %".format(classname, accuracy))
@@ -214,7 +210,7 @@ def bind_model(testloader, model):
     wr = csv.writer(f)
     wr.writerows(pred)
     f.close()
-    print('Done!!')
+    print(out_path[1:], 'file saved!!')
 
     exit(1)
 

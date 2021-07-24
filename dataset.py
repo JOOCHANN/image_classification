@@ -44,7 +44,6 @@ class SMOKE(Dataset):
         self.imag_path = os.path.join(data_path, 'images')
         self.train = isTrain
 
-        print('Data init')
         self.metadata = pd.read_csv(os.path.join(data_path, 'annot.csv'))
         self.image_filenames = []
         for _, row in self.metadata.iterrows():
