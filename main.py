@@ -14,7 +14,7 @@ from test import *
 
 classes = ['working_factory', 'unworking_factory', 'cloud']
 
-def main(pause):
+def main(mode):
     # SEED
     torch.manual_seed(conf.seed)
     use_gpu = torch.cuda.is_available()
@@ -23,12 +23,12 @@ def main(pause):
     torch.cuda.manual_seed_all(conf.seed)
 
     # data loading
-    if pause == 0:
+    if mode == 'train':
         print("Train dataset loading")
         train_path = os.path.join(data_path, 'train')
         smoke_trainset = SMOKE(classes, train_path, isTrain = True)
         trainloader = DataLoader(dataset=smoke_trainset, batch_size=conf.batch, shuffle=True)
-    elif pause == 1:
+    elif mode == 'test':
         print("Test dataset loading")
         test_path = os.path.join(data_path, 'test_v3')
         smoke_trainset = SMOKE(classes, test_path, isTrain = False)
@@ -41,7 +41,7 @@ def main(pause):
     model = EfficientNet.from_pretrained(conf.model_name, num_classes=conf.num_classes)
     # print('Model input size', EfficientNet.get_image_size(model_name))
     # print("End Creating model: {}".format(model_name))
-    if pause == 1 :
+    if mode == 'test' :
         model.to("cuda")
         test(testloader, model, classes, load_model_path, out_path)
         exit(1)
@@ -56,7 +56,7 @@ def main(pause):
 
     #Loss Function
     criterion = nn.CrossEntropyLoss()
-    
+
     #Optimizer
     optimizer = torch.optim.SGD(model.parameters(), lr=conf.lr, weight_decay=conf.weight_decay, momentum=conf.momentum)
 
@@ -99,9 +99,9 @@ if __name__ == "__main__":
 
     if mode == 'test':
         print("Testing!!!")
-        main(pause = 1)
     
     if mode == 'train':
         mkdir_if_not_exists(save_model_path)
         print("Training!!!")
-        main(pause = 0)
+    
+    main(mode)
