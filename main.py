@@ -48,7 +48,7 @@ def main(pause):
         trainloader = DataLoader(dataset=smoke_trainset, batch_size=batch, shuffle=True)
     elif pause == 1:
         print("Test dataset loading")
-        test_path = os.path.join(data_path, 'test')
+        test_path = os.path.join(data_path, 'test_v3')
         smoke_trainset = SMOKE(classes, test_path, isTrain = False)
         testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
     
@@ -201,9 +201,9 @@ def bind_model(testloader, model):
 
     # 결과 출력
     print('Accuracy of the all test images: %d %%' % (100 * correct / total))
-    for classname, correct_count in correct_pred.items():
-        accuracy = 100 * float(correct_count) / total_pred[classname]
-        print("Accuracy for class {:5s} is: {:.1f} %".format(classname, accuracy))
+    # for classname, correct_count in correct_pred.items():
+    #     accuracy = 100 * float(correct_count) / total_pred[classname]
+    #     print("Accuracy for class {:5s} is: {:.1f} %".format(classname, accuracy))
     
     # prediction csv파일로 저장
     f = open(out_path, 'w', newline='')
@@ -216,7 +216,7 @@ def bind_model(testloader, model):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('--mode', default='test')
+    parser.add_argument('--mode', default='train')
     args = parser.parse_args()
 
     mkdir_if_not_exists(save_model_path)
