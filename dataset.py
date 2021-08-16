@@ -1,28 +1,28 @@
-from os import listdir
-from pathlib import Path
-from tempfile import mkdtemp
-from warnings import warn
-import shutil
-import pandas as pd
 import os
 import torchvision.transforms as transforms
-import torchvision.transforms.functional as FT
-import random
+import pandas as pd
 from PIL import Image
 from torch.utils.data.dataset import Dataset
+from augmentation import RandAugment
 
 mean = (0.485, 0.456, 0.406)
 std = (0.229, 0.224, 0.225)
+
+# resize 크기
 size = 430
+
+# 적용할 augmentation 개수
+N = 2
+
+# 적용할 augmentation의 magnitude [0, 30]
+M = 14 
 
 #train_data
 def train_transform(Rsize):
     return transforms.Compose([
         transforms.Resize((Rsize, Rsize), interpolation=Image.BICUBIC), #이미지 크기를 Rsize, Rsize로 Resizing함
-        # transforms.RandomCrop(Rsize, padding=10),  # 이미지를 Crop한 뒤에 빈 곳을 padding함
-        # transforms.RandomAffine(degrees=0, scale=(0.80, 1.2)), # translate a = width(0.1), b = height(0)
-        # transforms.ColorJitter(brightness=(0.8, 1.2)),
-        # transforms.RandomGrayscale(p=1),
+        # Cubuk, Ekin D., et al. CVPR, 2020
+        RandAugment(N, M), # RandAugmentation
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
@@ -32,7 +32,6 @@ def train_transform(Rsize):
 def test_transform(Rsize):
     return transforms.Compose([
         transforms.Resize((Rsize, Rsize), interpolation=Image.BICUBIC), #이미지 크기를 Rsize, Rsize로 Resizing함
-        # transforms.RandomGrayscale(p=1),
         transforms.ToTensor(),
         transforms.Normalize(mean, std)
     ])
@@ -43,7 +42,6 @@ class SMOKE(Dataset):
         self.classes = class_info
         self.imag_path = os.path.join(data_path, 'images')
         self.train = isTrain
-
         self.metadata = pd.read_csv(os.path.join(data_path, 'annot.csv'))
         self.image_filenames = []
         for _, row in self.metadata.iterrows():
