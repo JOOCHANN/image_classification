@@ -34,7 +34,7 @@ def main(mode):
         smoke_trainset = SMOKE(classes, test_path, isTrain = False)
         testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
     
-    print("number of data :", len(smoke_trainset), "End dataset loading")
+    print("number of data :", len(smoke_trainset))
 
     # model loading
     print("Creating model: {}".format(conf.model_name))
