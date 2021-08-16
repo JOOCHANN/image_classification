@@ -33,14 +33,12 @@ def main(mode):
         test_path = os.path.join(data_path, 'test_v3')
         smoke_trainset = SMOKE(classes, test_path, isTrain = False)
         testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
-    
     print("number of data :", len(smoke_trainset))
 
     # model loading
     print("Creating model: {}".format(conf.model_name))
     model = EfficientNet.from_pretrained(conf.model_name, num_classes=conf.num_classes)
     # print('Model input size', EfficientNet.get_image_size(model_name))
-    # print("End Creating model: {}".format(model_name))
     if mode == 'test' :
         model.to("cuda")
         test(testloader, model, classes, load_model_path, out_path)
@@ -60,19 +58,20 @@ def main(mode):
     #Optimizer
     optimizer = torch.optim.SGD(model.parameters(), lr=conf.lr, weight_decay=conf.weight_decay, momentum=conf.momentum)
 
-    #learning rate를 일정 epoch마다 감소
+    #learning rate scheduler
     if conf.is_scheduler == True:
         # 매 stepsize마다 learning rate를 0.1씩 감소하는 scheduler 생성
         scheduler = lr_scheduler.StepLR(optimizer, step_size=conf.stepsize, gamma=conf.gamma)
 
+    # train model
     for epoch in range(conf.max_epoch):
         epoch = epoch
         print("==> Epoch {}/{}".format(epoch+1, conf.max_epoch))
 
-        #model train
+        # train model
         model_train(model, criterion, optimizer, trainloader, use_gpu, epoch, scheduler, save_model_path)
 
-        #save model
+        # save model
         save_model_name = save_model_path + '_' + str(epoch) + '.pth'
         torch.save(model.module.state_dict(), save_model_name)
         # save_model(model, 'e{}'.format(epoch))
