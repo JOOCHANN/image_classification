@@ -80,7 +80,7 @@ if __name__ == "__main__":
     parser.add_argument('--mode', choices=['train', 'test'], default='test')
     parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/_13.pth', 
                             help='Path of model weights to be loaded')
-    parser.add_argument('--out_path', default='.predictions.csv', 
+    parser.add_argument('--out_path', default='predictions.csv', 
                             help='csv file to save the result')
     parser.add_argument('--save_model_path', default='./work_dirs/efficientnet-b7/', 
                             help='Path to store model weights')
