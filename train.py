@@ -2,7 +2,7 @@ from utils import *
 import torch
 import config.efficient_net7 as conf
 
-def model_train(model, criterion, optimizer, trainloader, use_gpu, epoch, scheduler, save_model_path):
+def model_train(model, criterion, optimizer, trainloader, testloader, use_gpu, epoch, scheduler, save_model_path):
     model.train()
     losses = AverageMeter() # loss의 평균을 구하는 함수
     for iter, (data, labels) in enumerate(trainloader):
@@ -37,7 +37,7 @@ def model_train(model, criterion, optimizer, trainloader, use_gpu, epoch, schedu
 
     #Train Accuracy를 출력
     print("==> Train Accuracy")
-    acc, err = model_test(model, trainloader, use_gpu)
+    acc, err = model_test(model, testloader, use_gpu)
     print("Accuracy (%): {}\t Error rate(%): {}".format(acc, err))
 
 def model_test(model, testloader, use_gpu):

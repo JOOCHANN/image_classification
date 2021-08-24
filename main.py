@@ -23,17 +23,15 @@ def main(mode):
     torch.cuda.manual_seed_all(conf.seed)
 
     # data loading
-    if mode == 'train':
-        print("Train dataset loading")
-        train_path = os.path.join(data_path, 'train')
-        smoke_trainset = SMOKE(classes, train_path, isTrain = True)
-        trainloader = DataLoader(dataset=smoke_trainset, batch_size=conf.batch, shuffle=True)
-    elif mode == 'test':
-        print("Test dataset loading")
-        test_path = os.path.join(data_path, 'test_v3')
-        smoke_trainset = SMOKE(classes, test_path, isTrain = False)
-        testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
-    print("number of data :", len(smoke_trainset))
+    print("Train dataset loading")
+    train_path = os.path.join(data_path, 'train')
+    smoke_trainset = SMOKE(classes, train_path, isTrain = True)
+    trainloader = DataLoader(dataset=smoke_trainset, batch_size=conf.batch, shuffle=True)
+
+    print("Test dataset loading")
+    test_path = os.path.join(data_path, 'test_v3')
+    smoke_trainset = SMOKE(classes, test_path, isTrain = False)
+    testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
 
     # model loading
     print("Creating model: {}".format(conf.model_name))
@@ -69,7 +67,7 @@ def main(mode):
         print("==> Epoch {}/{}".format(epoch+1, conf.max_epoch))
 
         # train model
-        model_train(model, criterion, optimizer, trainloader, use_gpu, epoch, scheduler, save_model_path)
+        model_train(model, criterion, optimizer, trainloader, testloader, use_gpu, epoch, scheduler, save_model_path)
 
         # save model
         save_model_name = save_model_path + '_' + str(epoch) + '.pth'
@@ -86,7 +84,7 @@ if __name__ == "__main__":
                             help='csv file to save the result')
     parser.add_argument('--save_model_path', default='./work_dirs/efficientnet-b7/', 
                             help='Path to store model weights')
-    parser.add_argument('--data_path', default='/data/data_server/pjc/planet_data_classification', 
+    parser.add_argument('--data_path', default='/home/ubuntu/data/smoke_classification', 
                             help='Data path')
     args = parser.parse_args()
 

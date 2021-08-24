@@ -1,6 +1,6 @@
 # custom
 work_dirs/
-.predicts.csv
+.predictions.csv
 
 # cache
 __pycache__
