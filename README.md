@@ -24,14 +24,14 @@ b. Install PyTorch stable or nightly and torchvision following the [official ins
 conda install pytorch=1.3 torchvision cudatoolkit=10.0 -c pytorch
 ```
 
-c. Clone the s2anet repository.
+c. Clone the image_classification repository.
 
 ```shell
 git clone https://github.com/JOOCHANN/image_classification.git
 cd image_classification
 ```
 
-d. Install s2anet
+d. Install image_classification
 
 ```shell
 pip install pandas
