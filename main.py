@@ -25,12 +25,12 @@ def main(mode):
     # data loading
     print("Train dataset loading")
     train_path = os.path.join(data_path, 'train')
-    smoke_trainset = SMOKE(classes, train_path, isTrain = True)
+    smoke_trainset = SMOKE(classes, train_path, isTrain=True, multi_size=conf.train_size)
     trainloader = DataLoader(dataset=smoke_trainset, batch_size=conf.batch, shuffle=True)
 
     print("Test dataset loading")
     test_path = os.path.join(data_path, 'test_v3')
-    smoke_trainset = SMOKE(classes, test_path, isTrain = False)
+    smoke_trainset = SMOKE(classes, test_path, isTrain=False, multi_size=conf.multi_test_size) # multi size testing
     testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
 
     # model loading
@@ -39,7 +39,7 @@ def main(mode):
     # print('Model input size', EfficientNet.get_image_size(model_name))
     if mode == 'test' :
         model.to("cuda")
-        test(testloader, model, classes, load_model_path, out_path)
+        test(testloader, model, classes, load_model_path, out_path, conf.multi_test_size)
         exit(1)
 
     # model to GPU
@@ -78,7 +78,7 @@ def main(mode):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='smoke classification')
     parser.add_argument('--mode', choices=['train', 'test'], default='test')
-    parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/_13.pth', 
+    parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/randaug_2_14_best_epoch/_13.pth', 
                             help='Path of model weights to be loaded')
     parser.add_argument('--out_path', default='predictions.csv', 
                             help='csv file to save the result')

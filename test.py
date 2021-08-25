@@ -1,8 +1,9 @@
 import torch
 import csv
+import time
 from sklearn.metrics import precision_recall_fscore_support
 
-def test(testloader, model, classes, load_model_path, out_path):
+def test(testloader, model, classes, load_model_path, out_path, multi_test_size):
     # model load
     model.load_state_dict(torch.load(load_model_path))
     model.eval()
@@ -13,25 +14,38 @@ def test(testloader, model, classes, load_model_path, out_path):
     pred = []
     y_true = []
     y_pred = []
+    outs = []
+    multi_test_len = len(multi_test_size)
 
+    start = time.time()
     with torch.no_grad():
         for i, (data, labels, image_name) in enumerate(testloader):
             data = data.cuda()
             outputs = model(data)
-            _, predicted = torch.max(outputs.data, 1)
 
-            y_pred.append(predicted.cpu().tolist())
-            y_true.append(labels.tolist())
+            outs.append(outputs)
 
-            total += labels.size(0)
-            correct += (predicted.cpu() == labels).sum().item()
-            pred.append([image_name[0], predicted.cpu().item()])
+            if (i+1) % len(multi_test_size) == 0 :
+                tmp = 0
+                for k in range(multi_test_len):
+                    tmp = tmp + outs[k]
+                outs = []
 
-            for label, prediction in zip(labels, predicted):
-                if label == prediction:
-                    correct_pred[classes[label]] += 1
-                total_pred[classes[label]] += 1
+                _, predicted = torch.max(tmp.data, 1)
 
+                y_pred.append(predicted.cpu().tolist())
+                y_true.append(labels.tolist())
+
+                total += labels.size(0)
+                correct += (predicted.cpu() == labels).sum().item()
+                pred.append([image_name[0], predicted.cpu().item()])
+
+                for label, prediction in zip(labels, predicted):
+                    if label == prediction:
+                        correct_pred[classes[label]] += 1
+                    total_pred[classes[label]] += 1
+
+    print("inference time :", time.time() - start)
     precision, recall, fscore, support = precision_recall_fscore_support(y_true, y_pred, average=None)
 
     # precision, recall, f1score 출력

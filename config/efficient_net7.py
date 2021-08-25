@@ -10,3 +10,5 @@ batch = 16
 stepsize = 12
 is_scheduler = True
 gamma = 0.1
+multi_test_size = [224, 112, 75] # sr : [448, 224, 150]
+train_size = [224]
