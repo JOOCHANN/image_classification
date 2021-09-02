@@ -25,13 +25,12 @@ def main():
     # data loading
     print("Demo dataset loading")
     demo_path = os.path.join(data_path)
-    smoke_trainset = SMOKE_DEMO(classes, demo_path) # multi size testing
-    testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
+    smoke_demoset = SMOKE_DEMO(classes, demo_path)
+    testloader = DataLoader(dataset=smoke_demoset, batch_size=1, shuffle=False)
 
     # model loading
     print("Creating model: {}".format(conf.model_name))
     model = EfficientNet.from_pretrained(conf.model_name, num_classes=conf.num_classes)
-    # print('Model input size', EfficientNet.get_image_size(model_name))
     model.to("cuda")
     model.load_state_dict(torch.load(load_model_path))
 
