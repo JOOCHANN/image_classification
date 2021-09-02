@@ -37,3 +37,9 @@ d. Install image_classification
 pip install pandas
 pip install sklearn
 ```
+
+### DEMO
+
+```shell
+python demo.py --load_model_path='' --out_file='' --demo_data_path=''
+```

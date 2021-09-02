@@ -3,7 +3,6 @@ import torchvision.transforms as transforms
 import pandas as pd
 from PIL import Image
 from torch.utils.data.dataset import Dataset
-from torchvision.transforms.transforms import CenterCrop
 from augmentation import RandAugment
 
 mean = (0.485, 0.456, 0.406)
@@ -68,6 +67,21 @@ class SMOKE(Dataset):
             image = multi_transform(Image.open(self.image_filenames[index][0]))
             label = self.image_filenames[index][1]
             return image, label, self.image_filenames[index][0].split('/')[-1]
+
+    def __len__(self):
+        return len(self.image_filenames)
+
+class SMOKE_DEMO(Dataset):
+    def __init__(self, class_info, data_path):
+        super(SMOKE_DEMO, self).__init__()
+        self.classes = class_info
+        self.image_filenames = [[os.path.join(data_path, x), x] for x in os.listdir(data_path)]
+        self.test_transform = test_transform(Rsize=size)
+
+    def __getitem__(self, index):
+        demo_transform = transforms.Compose(self.test_transform)
+        image = demo_transform(Image.open(self.image_filenames[index][0]))
+        return image, self.image_filenames[index][1]
 
     def __len__(self):
         return len(self.image_filenames)
