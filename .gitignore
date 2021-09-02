@@ -1,6 +1,7 @@
 # custom
 work_dirs/
 predictions.csv
+demo_image/
 
 # cache
 __pycache__
