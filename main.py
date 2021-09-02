@@ -70,15 +70,15 @@ def main(mode):
         model_train(model, criterion, optimizer, trainloader, testloader, use_gpu, epoch, scheduler, save_model_path)
 
         # save model
-        save_model_name = save_model_path + '_' + str(epoch) + '.pth'
+        save_model_name = save_model_path + '_' + str(epoch+1) + '.pth'
         torch.save(model.module.state_dict(), save_model_name)
         # save_model(model, 'e{}'.format(epoch))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='smoke classification')
-    parser.add_argument('--mode', choices=['train', 'test'], default='test')
-    parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/randaug_2_14_best_epoch/_13.pth', 
+    parser.add_argument('--mode', choices=['train', 'test'], default='train')
+    parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/randaug_2_14_best_epoch/_9.pth', 
                             help='Path of model weights to be loaded')
     parser.add_argument('--out_path', default='predictions.csv', 
                             help='csv file to save the result')

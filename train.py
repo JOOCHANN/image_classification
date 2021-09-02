@@ -1,10 +1,12 @@
 from utils import *
 import torch
+import time
 import config.efficient_net7 as conf
 
 def model_train(model, criterion, optimizer, trainloader, testloader, use_gpu, epoch, scheduler, save_model_path):
     model.train()
     losses = AverageMeter() # loss의 평균을 구하는 함수
+    start = time.time()
     for iter, (data, labels) in enumerate(trainloader):
         if use_gpu:
             data, labels = data.cuda(), labels.cuda()
@@ -20,8 +22,9 @@ def model_train(model, criterion, optimizer, trainloader, testloader, use_gpu, e
         if (iter+1) % conf.print_freq == 0: #매 print_freq iteration마다 아래를 출력
             for param_group in optimizer.param_groups:
                 lr = param_group['lr']
-            print("Batch {}/{}\t Loss {:.6f} ({:.6f})\t lr {}" \
-                    .format(iter+1, len(trainloader), losses.val, losses.avg, lr))
+            print("Batch {}/{}\t Loss {:.6f} ({:.6f})\t lr {}\t time {:.3f}" \
+                    .format(iter+1, len(trainloader), losses.val, losses.avg, lr, time.time()-start))
+            start = time.time()
 
         if (iter+1) % 30 == 0 :
             save_model_name = save_model_path + '_' + str(epoch) + '_' + str(iter+1) + '.pth'
@@ -29,14 +32,11 @@ def model_train(model, criterion, optimizer, trainloader, testloader, use_gpu, e
             # print('save :', save_model_name)
     
     # 매 stepsize마다 learning rate를 0.1씩 감소하는 scheduler 실행.
-    if conf.is_scheduler == True:
-        if epoch == 0:
-            print("epoch 0... no learning rate step")
-        else : 
-            scheduler.step()
+    if conf.is_scheduler == True: 
+        scheduler.step()
 
-    #Train Accuracy를 출력
-    print("==> Train Accuracy")
+    # Accuracy를 출력
+    print("==> Test Accuracy")
     acc, err = model_test(model, testloader, use_gpu)
     print("Accuracy (%): {}\t Error rate(%): {}".format(acc, err))
 
@@ -45,7 +45,7 @@ def model_test(model, testloader, use_gpu):
     correct, total = 0, 0
 
     with torch.no_grad(): #parameter을 갱신하지 않음(backpropagation을 하지않음)
-        for i, (data, labels) in enumerate(testloader):
+        for i, (data, labels, image_name) in enumerate(testloader):
             if use_gpu:
                 data, labels = data.cuda(), labels.cuda()
             outputs = model(data)

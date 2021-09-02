@@ -16,7 +16,7 @@ size = 430
 N = 2
 
 # 적용할 augmentation의 magnitude [0, 30]
-M = 14 
+M = 14
 
 #train_data
 def train_transform(Rsize):
