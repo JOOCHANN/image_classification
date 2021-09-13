@@ -29,7 +29,7 @@ def main(mode):
     trainloader = DataLoader(dataset=smoke_trainset, batch_size=conf.batch, shuffle=True)
 
     print("Test dataset loading")
-    test_path = os.path.join(data_path, 'test_v3')
+    test_path = os.path.join(data_path, 'test_v4')
     smoke_trainset = SMOKE(classes, test_path, isTrain=False, multi_size=conf.multi_test_size) # multi size testing
     testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
 

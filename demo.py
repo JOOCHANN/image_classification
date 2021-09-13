@@ -40,9 +40,7 @@ def main():
         for i, (data, image_name) in enumerate(testloader):
             data = data.cuda()
             outputs = model(data)
-
             _, predicted = torch.max(outputs.data, 1)
-
             pred.append([image_name[0], classes[predicted.cpu().item()]])
 
     f = open(out_file, 'w', newline='')

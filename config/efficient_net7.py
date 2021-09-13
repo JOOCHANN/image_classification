@@ -1,13 +1,13 @@
 seed = '1'
 lr = 0.01
-max_epoch = 10
+max_epoch = 13
 print_freq = 10
 model_name = 'efficientnet-b7'
 num_classes = 3
 weight_decay = 5e-04
 momentum = 0.9
 batch = 16
-stepsize = 6
+stepsize = 8
 is_scheduler = True
 gamma = 0.1
 multi_test_size = [224]
