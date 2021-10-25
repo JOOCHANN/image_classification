@@ -1,7 +1,7 @@
 import torch
 import csv
 import time
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
 
 def test(testloader, model, classes, load_model_path, out_path, multi_test_size):
     # model load
@@ -60,6 +60,11 @@ def test(testloader, model, classes, load_model_path, out_path, multi_test_size)
     #     accuracy = 100 * float(correct_count) / total_pred[classname]
     #     print("Accuracy for class {:5s} is: {:.1f} %".format(classname, accuracy))
     
+    # confusion matrix
+    cf = confusion_matrix(y_true, y_pred)
+    print("Confusion Matrix")
+    print(cf)
+
     # prediction csv파일로 저장
     f = open(out_path, 'w', newline='')
     wr = csv.writer(f)
