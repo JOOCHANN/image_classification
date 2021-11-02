@@ -33,7 +33,8 @@ def main():
     model = EfficientNet.from_pretrained(conf.model_name, num_classes=conf.num_classes)
     model.to("cuda")
     model.load_state_dict(torch.load(load_model_path))
-
+    mode.eval()
+    
     pred = []
 
     with torch.no_grad():
