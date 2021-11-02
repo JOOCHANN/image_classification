@@ -12,7 +12,7 @@ std = (0.229, 0.224, 0.225)
 size = 430
 
 # 적용할 augmentation 개수
-N = 2
+N = 1
 
 # 적용할 augmentation의 magnitude [0, 30]
 M = 14
@@ -62,7 +62,10 @@ class SMOKE(Dataset):
             label = self.image_filenames[index][1]
             return image, label
         else :
-            multi_transform = transforms.Compose([transforms.CenterCrop(self.image_filenames[index][2])] + self.test_transform)
+            if len(self.multi_size) == 1:
+                multi_transform = transforms.Compose(self.test_transform)
+            else :
+                multi_transform = transforms.Compose([transforms.CenterCrop(self.image_filenames[index][2])] + self.test_transform)
 
             image = multi_transform(Image.open(self.image_filenames[index][0]))
             label = self.image_filenames[index][1]
