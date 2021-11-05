@@ -23,23 +23,28 @@ def main(mode):
     torch.cuda.manual_seed_all(conf.seed)
 
     # data loading
-    print("Train dataset loading")
-    train_path = os.path.join(data_path, 'train')
-    smoke_trainset = SMOKE(classes, train_path, isTrain=True, multi_size=conf.train_size)
-    trainloader = DataLoader(dataset=smoke_trainset, batch_size=conf.batch, shuffle=True)
+    if mode =='train':
+        print("Train dataset loading")
+        smoke_trainset = SMOKE(classes, train_data_path, isTrain=True, multi_size=conf.train_size)
+        trainloader = DataLoader(dataset=smoke_trainset, batch_size=conf.batch, shuffle=True)
 
     print("Test dataset loading")
-    test_path = os.path.join(data_path, 'test_v4')
-    smoke_trainset = SMOKE(classes, test_path, isTrain=False, multi_size=conf.multi_test_size) # multi size testing
+    smoke_trainset = SMOKE(classes, test_data_path, isTrain=False, multi_size=conf.multi_test_size) # multi size testing
     testloader = DataLoader(dataset=smoke_trainset, batch_size=1, shuffle=False)
 
     # model loading
     print("Creating model: {}".format(conf.model_name))
     model = EfficientNet.from_pretrained(conf.model_name, num_classes=conf.num_classes)
     # print('Model input size', EfficientNet.get_image_size(model_name))
+    
+    if use_gpu == True:
+        device = "cuda"
+    else :
+        device = "cpu"
+
     if mode == 'test' :
-        model.to("cuda")
-        test(testloader, model, classes, load_model_path, out_path, conf.multi_test_size)
+        model.to(device)
+        test(testloader, model, classes, load_model_path, out_path, conf.multi_test_size, device)
         exit(1)
 
     # model to GPU
@@ -47,7 +52,7 @@ def main(mode):
         print("Use", torch.cuda.device_count(), "GPUs")
         model = nn.DataParallel(model).cuda()
     else :
-        model.to("cuda")
+        model.to(device)
     print("Loaded")
 
     #Loss Function
@@ -78,13 +83,15 @@ def main(mode):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='smoke classification')
     parser.add_argument('--mode', choices=['train', 'test'], default='train')
-    parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/randaug_2_14_best_epoch/_9.pth', 
+    parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/best_epoch.pth', 
                             help='Path of model weights to be loaded')
     parser.add_argument('--out_path', default='predictions.csv', 
                             help='csv file to save the result')
     parser.add_argument('--save_model_path', default='./work_dirs/efficientnet-b7/', 
                             help='Path to store model weights')
-    parser.add_argument('--data_path', default='/home/ubuntu/data/smoke_classification', 
+    parser.add_argument('--train_data_path', default='/data/data_server/pjc/smoke_classification/train_v4', 
+                            help='Data path')
+    parser.add_argument('--test_data_path', default='/data/data_server/pjc/smoke_classification/final_test', 
                             help='Data path')
     args = parser.parse_args()
 
@@ -92,7 +99,8 @@ if __name__ == "__main__":
     load_model_path = args.load_model_path
     out_path = args.out_path
     save_model_path = args.save_model_path
-    data_path = args.data_path
+    train_data_path = args.train_data_path
+    test_data_path = args.test_data_path
 
     if mode == 'test':
         print("Testing!!!")

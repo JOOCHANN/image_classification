@@ -3,10 +3,15 @@ import csv
 import time
 from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
 
-def test(testloader, model, classes, load_model_path, out_path, multi_test_size):
+def test(testloader, model, classes, load_model_path, out_path, multi_test_size, device):
     # model load
-    model.load_state_dict(torch.load(load_model_path))
+    if device == "cuda":
+        model.load_state_dict(torch.load(load_model_path))
+    else : 
+        model.load_state_dict(torch.load(load_model_path, map_location=torch.device(device)))
+
     model.eval()
+
     correct = 0
     total = 0
     correct_pred = {classname: 0 for classname in classes}
@@ -20,7 +25,8 @@ def test(testloader, model, classes, load_model_path, out_path, multi_test_size)
     start = time.time()
     with torch.no_grad():
         for i, (data, labels, image_name) in enumerate(testloader):
-            data = data.cuda()
+            if device == "cuda":
+                data = data.cuda()
             outputs = model(data)
 
             outs.append(outputs)
@@ -40,7 +46,7 @@ def test(testloader, model, classes, load_model_path, out_path, multi_test_size)
                 correct += (predicted.cpu() == labels).sum().item()
                 pred.append([image_name[0], predicted.cpu().item()])
 
-                for label, prediction in zip(labels, predicted):
+                for label, prediction in zip(labels, predicted.cpu()):
                     if label == prediction:
                         correct_pred[classes[label]] += 1
                     total_pred[classes[label]] += 1

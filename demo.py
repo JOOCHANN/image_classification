@@ -24,15 +24,17 @@ def main():
 
     # data loading
     print("Demo dataset loading")
-    demo_path = os.path.join(data_path)
-    smoke_demoset = SMOKE_DEMO(classes, demo_path)
+    smoke_demoset = SMOKE_DEMO(classes, demo_data_path)
     testloader = DataLoader(dataset=smoke_demoset, batch_size=1, shuffle=False)
 
     # model loading
     print("Creating model: {}".format(conf.model_name))
     model = EfficientNet.from_pretrained(conf.model_name, num_classes=conf.num_classes)
-    model.to("cuda")
-    model.load_state_dict(torch.load(load_model_path))
+    if use_gpu == True:
+        model.to("cuda")
+        model.load_state_dict(torch.load(load_model_path))
+    else :
+        model.load_state_dict(torch.load(load_model_path, map_location=torch.device("cpu")))
     model.eval()
     
     pred = []
@@ -55,12 +57,12 @@ if __name__ == "__main__":
                             help='Path of model weights to be loaded')
     parser.add_argument('--out_file', default='predictions.csv', 
                             help='csv file to save the result')
-    parser.add_argument('--demo_data_path', default='./demo_img', 
-                            help='Data path')
+    parser.add_argument('--demo_data_path', default='/data/data_server/pjc/smoke_classification/final_test/images', 
+                            help='Demo data path')
     args = parser.parse_args()
 
     load_model_path = args.load_model_path
     out_file = args.out_file
-    data_path = args.demo_data_path
+    demo_data_path = args.demo_data_path
 
     main()
