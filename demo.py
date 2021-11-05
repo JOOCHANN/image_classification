@@ -55,7 +55,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='smoke classification')
     parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/best_epoch.pth', 
                             help='Path of model weights to be loaded')
-    parser.add_argument('--out_file', default='predictions.csv', 
+    parser.add_argument('--out_file', default='demo_results.csv', 
                             help='csv file to save the result')
     parser.add_argument('--demo_data_path', default='/data/data_server/pjc/smoke_classification/final_test/images', 
                             help='Demo data path')

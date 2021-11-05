@@ -9,7 +9,7 @@ mean = (0.485, 0.456, 0.406)
 std = (0.229, 0.224, 0.225)
 
 # resize 크기
-size = 430
+size = 500
 
 # 적용할 augmentation 개수
 N = 1
@@ -67,7 +67,7 @@ class SMOKE(Dataset):
             else :
                 multi_transform = transforms.Compose([transforms.CenterCrop(self.image_filenames[index][2])] + self.test_transform)
 
-            image = multi_transform(Image.open(self.image_filenames[index][0]))
+            image = multi_transform(Image.open(self.image_filenames[index][0]).convert('RGB'))
             label = self.image_filenames[index][1]
             return image, label, self.image_filenames[index][0].split('/')[-1]
 
