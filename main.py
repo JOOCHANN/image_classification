@@ -14,6 +14,8 @@ from test import *
 
 classes = ['working_factory', 'unworking_factory', 'cloud']
 
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1, 2, 3"
+
 def main(mode):
     # SEED
     torch.manual_seed(conf.seed)
@@ -82,16 +84,16 @@ def main(mode):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='smoke classification')
-    parser.add_argument('--mode', choices=['train', 'test'], default='test')
+    parser.add_argument('--mode', choices=['train', 'test'], default='train')
     parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/best_epoch.pth', 
                             help='Path of model weights to be loaded')
     parser.add_argument('--out_path', default='test_predictions.csv', 
                             help='csv file to save the result')
     parser.add_argument('--save_model_path', default='./work_dirs/efficientnet-b7/', 
                             help='Path to store model weights')
-    parser.add_argument('--train_data_path', default='/data/data_server/pjc/smoke_classification/train_v4', 
+    parser.add_argument('--train_data_path', default='/data/data_server/pjc/smoke_classification/train_v3', 
                             help='Data path')
-    parser.add_argument('--test_data_path', default='/data/data_server/pjc/smoke_classification/final_test', 
+    parser.add_argument('--test_data_path', default='/data/data_server/pjc/smoke_classification/test_v2', # test_v2, final_test
                             help='Data path')
     args = parser.parse_args()
 

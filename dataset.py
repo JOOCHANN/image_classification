@@ -9,7 +9,8 @@ mean = (0.485, 0.456, 0.406)
 std = (0.229, 0.224, 0.225)
 
 # resize 크기
-size = 500
+# size = 430
+size = 550
 
 # 적용할 augmentation 개수
 N = 1
