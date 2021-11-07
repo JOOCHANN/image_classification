@@ -14,8 +14,6 @@ from test import *
 
 classes = ['working_factory', 'unworking_factory', 'cloud']
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1, 2, 3"
-
 def main(mode):
     # SEED
     torch.manual_seed(conf.seed)
@@ -84,7 +82,7 @@ def main(mode):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='smoke classification')
-    parser.add_argument('--mode', choices=['train', 'test'], default='train')
+    parser.add_argument('--mode', choices=['train', 'test'], default='test')
     parser.add_argument('--load_model_path', default='./work_dirs/efficientnet-b7/best_epoch.pth', 
                             help='Path of model weights to be loaded')
     parser.add_argument('--out_path', default='test_predictions.csv', 
