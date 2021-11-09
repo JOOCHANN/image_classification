@@ -43,3 +43,9 @@ pip install sklearn
 ```shell
 python demo.py --load_model_path='' --out_file='' --demo_data_path=''
 ```
+
+### TEST
+
+```shell
+python main.py --mode 'test' --load_model_path='' --out_file='' --test_data_path=''
+```
