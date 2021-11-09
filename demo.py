@@ -41,7 +41,8 @@ def main():
 
     with torch.no_grad():
         for i, (data, image_name) in enumerate(testloader):
-            data = data.cuda()
+            if use_gpu == True:
+                data = data.cuda()
             outputs = model(data)
             _, predicted = torch.max(outputs.data, 1)
             pred.append([image_name[0], classes[predicted.cpu().item()]])
