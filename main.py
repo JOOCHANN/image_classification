@@ -36,12 +36,12 @@ def main(mode):
     print("Creating model: {}".format(conf.model_name))
     model = EfficientNet.from_pretrained(conf.model_name, num_classes=conf.num_classes)
     # print('Model input size', EfficientNet.get_image_size(model_name))
-    
+
     if use_gpu == True:
         device = "cuda"
     else :
         device = "cpu"
-
+        
     if mode == 'test' :
         model.to(device)
         test(testloader, model, classes, load_model_path, out_path, conf.multi_test_size, device)
@@ -91,7 +91,7 @@ if __name__ == "__main__":
                             help='Path to store model weights')
     parser.add_argument('--train_data_path', default='/data/data_server/pjc/smoke_classification/train_v3', 
                             help='Data path')
-    parser.add_argument('--test_data_path', default='/data/data_server/pjc/smoke_classification/test_v2', # test_v2, final_test
+    parser.add_argument('--test_data_path', default='/data/data_server/pjc/smoke_classification/final_test', # test_v2, final_test
                             help='Data path')
     args = parser.parse_args()
 

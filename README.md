@@ -49,3 +49,9 @@ python demo.py --load_model_path='' --out_file='' --demo_data_path=''
 ```shell
 python main.py --mode 'test' --load_model_path='' --out_file='' --test_data_path=''
 ```
+
+### TRAIN
+
+```shell
+python main.py --mode 'train' --out_file='' --train_data_path='' --test_data_path=''
+```
