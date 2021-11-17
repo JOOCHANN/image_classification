@@ -58,9 +58,20 @@ def make_numpy_to_png(_numpy, save_file_name):
 
 def sliding_window(image, stepSize, windowSize, out_path, img_name):
 
-    for y in range(0, image.shape[0], stepSize):
-        for x in range(0, image.shape[1], stepSize):
-            tmp = image[y:y + windowSize[1], x:x + windowSize[0]]
+    H = image.shape[0]
+    W = image.shape[1]
+
+    for y in range(0, H, stepSize):
+        for x in range(0, W, stepSize):
+            if (windowSize[0] > W - x) and (windowSize[1] > H - y):
+                tmp = image[H - windowSize[1]:H + windowSize[1], W - windowSize[0]:W + windowSize[0]]
+            elif (windowSize[0] > W - x) and (windowSize[1] <= H - y):
+                tmp = image[y:y + windowSize[1], W - windowSize[0]:W + windowSize[0]]
+            elif (windowSize[0] <= W - x) and (windowSize[1] > H - y):
+                tmp = image[H - windowSize[1]:H + windowSize[1], x:x + windowSize[0]]
+            else :
+                tmp = image[y:y + windowSize[1], x:x + windowSize[0]]
+                
             save_file_name = os.path.join(out_path, img_name.split('.')[0] + '_' + str(x) + '_' + str(y) + '.png')
             make_numpy_to_png(tmp, save_file_name)
 
