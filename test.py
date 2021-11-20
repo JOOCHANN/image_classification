@@ -76,4 +76,4 @@ def test(testloader, model, classes, load_model_path, out_path, multi_test_size,
     wr = csv.writer(f)
     wr.writerows(pred)
     f.close()
-    print(out_path[1:], 'file saved!!')
+    print(out_path, 'file saved!!')
